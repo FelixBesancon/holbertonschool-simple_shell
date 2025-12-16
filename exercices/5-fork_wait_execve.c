@@ -1,6 +1,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/wait.h>
+#include <stdlib.h>
 
 int main(void)
 {
@@ -24,7 +25,7 @@ int main(void)
 			printf("PID is %u\n", PID);
 			execve("/bin/ls", args, NULL);
 			perror("execve");
-			return (-1);
+			exit(1);
 		}
 		else
 		{
