@@ -1,59 +1,84 @@
 #include "shell.h"
 
+/**
+ * display_prompt - prints the prompt
+ */
 void display_prompt(void)
 {
-    if (isatty(STDIN_FILENO))
-    {
-        printf("#cisfun$ ");
-        fflush(stdout);
-    }
+	if (isatty(STDIN_FILENO))
+	{
+		printf("#cisfun$ ");
+		fflush(stdout);
+	}
 }
 
-ssize_t read_line(char **line, size_t *bufsize)
+/**
+ * read_line - reads a line from stdin
+ * @line: buffer
+ * @len: buffer size
+ * Return: number of chars read
+ */
+ssize_t read_line(char **line, size_t *len)
 {
-    ssize_t len = getline(line, bufsize, stdin);
+	ssize_t read;
 
-    if (len == -1)
-        return -1;
+	read = getline(line, len, stdin);
+	if (read == -1)
+		return (-1);
 
-    if (len > 0 && (*line)[len - 1] == '\n')
-        (*line)[len - 1] = '\0';
+	if (read > 0 && (*line)[read - 1] == '\n')
+		(*line)[read - 1] = '\0';
 
-    if ((*line)[0] == '\0')
-        return 0;
+	if ((*line)[0] == '\0')
+		return (0);
 
-    return len;
+	return (read);
 }
 
-void execute_cmd(char *line, char *program_name, char **env)
+/**
+ * execute_cmd - executes a command
+ * @line: command line
+ * @prog_name: argv[0]
+ * @env: environment
+ */
+void execute_cmd(char *line, char *prog_name, char **env)
 {
-    static int line_number = 1;
-    pid_t child_pid;
-    char *argv[2];
-    int status;
+	static int line_nb = 1;
+	pid_t pid;
+	char *argv[30];
+	char *token;
+	int i = 0;
+	int status;
 
-    child_pid = fork();
-    if (child_pid == -1)
-    {
-        perror(program_name);
-        return;
-    }
+	token = strtok(line, " ");
+	while (token != NULL && i < 30)
+	{
+		argv[i] = token;
+		token = strtok(NULL, " ");
+		i++;
+	}
+	argv[i] = NULL;
 
-    if (child_pid == 0)
-    {
-        argv[0] = line;
-        argv[1] = NULL;
+	pid = fork();
+	if (pid == -1)
+	{
+		perror(prog_name);
+		return;
+	}
 
-        if (execve(line, argv, env) == -1)
-        {
-            fprintf(stderr, "%s: %d: %s: not found\n", program_name, line_number, line);
-            exit(EXIT_FAILURE);
-        }
-    }
-    else
-    {
-        wait(&status);
-    }
+	if (pid == 0)
+	{
+		if (execve(argv[0], argv, env) == -1)
+		{
+			fprintf(stderr, "%s: %d: %s: not found\n",
+				prog_name, line_nb, argv[0]);
+			exit(127);
+		}
+	}
+	else
+	{
+		wait(&status);
+	}
 
-    line_number++;
+	line_nb++;
 }

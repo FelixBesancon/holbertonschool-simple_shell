@@ -1,33 +1,33 @@
 #include "shell.h"
 
 /**
- * main - Point d'entrée du shell
- * @argc: nombre d'arguments
- * @argv: tab d'arguments
- * @env: variable d'environnement
- * Return: 0 pour succès
+ * main - entry point of the shell
+ * @argc: argument count
+ * @argv: argument vector
+ * @env: environment
+ * Return: 0
  */
 int main(int argc, char **argv, char **env)
 {
 	char *line = NULL;
-	size_t bufsize = 0;
-	ssize_t len;
+	size_t len = 0;
+	ssize_t read;
 
 	(void)argc;
 
 	while (1)
 	{
 		display_prompt();
-		len = read_line(&line, &bufsize);
+		read = read_line(&line, &len);
 
-		if (len == -1)
+		if (read == -1)
 		{
 			if (isatty(STDIN_FILENO))
 				printf("\n");
 			break;
 		}
 
-		if (len == 0)
+		if (read == 0)
 			continue;
 
 		execute_cmd(line, argv[0], env);
