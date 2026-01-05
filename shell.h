@@ -6,6 +6,7 @@
 #include <sys/wait.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 ssize_t read_line(char **line, size_t *bufsize);
 void display_prompt(void);
