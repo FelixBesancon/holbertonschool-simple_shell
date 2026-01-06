@@ -1,0 +1,4 @@
+# This file lists all contributors to the repository.
+
+Alexis LAUBERT <alexislaubert@yahoo.fr>
+Felix BESANCON  <f.besancon@hotmail.fr>
