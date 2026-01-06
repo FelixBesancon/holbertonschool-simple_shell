@@ -1,0 +1,93 @@
+.TH HSH 1 "January 2026" "" "./hsh 1 manual"
+.SH NAME
+hsh \- A custom UNIX command line interpreter.
+.SH SYNOPSIS
+.B hsh
+[
+.I file
+]
+
+.SH DESCRIPTION
+The
+.B hsh
+program is a simple implementation of a UNIX command line interpreter
+written in C language for Holberton School France curriculum.
+
+It reads commands from standard input (interactive mode) or from a file
+or pipe (non-interactive mode), and executes them.
+
+For each command line, the shell:
+
+.IP 1. 4
+Displays a prompt when running interactively.
+.IP 2.
+Parses the command line into tokens.
+.IP 3.
+Executes built-in commands when applicable.
+.IP 4.
+Otherwise searches for the command in the directories listed in
+the PATH environment variable and executes it using
+.BR execve (2).
+
+If a command cannot be executed,
+.B hsh
+prints an error message and continues reading input.
+
+End of file (Ctrl\-D) terminates the shell.
+
+.SH BUILTINS
+.TP
+.B exit [status]
+Exit the shell.
+
+If
+.I status
+is provided, it is used as the shell exit status.
+If no status is provided, the shell exits with status 0.
+
+.TP
+.B env
+Print the current environment, one variable per line.
+
+.SH EXIT STATUS
+The exit status of
+.B hsh
+is normally the exit status of the last executed command.
+
+If the
+.B exit
+built-in is used, the shell terminates with the given status.
+
+.SH EXAMPLES
+Interactive use:
+
+.RS
+.nf
+$ ./hsh
+$ /bin/ls
+$ exit
+.fi
+.RE
+
+Non-interactive use:
+
+.RS
+.nf
+$ echo "/bin/ls" | ./hsh
+$ ./hsh script.sh
+.fi
+.RE
+
+.SH FILES
+None.
+
+.SH BUGS
+This shell implements only a subset of standard shell features.
+
+.SH AUTHOR
+Written as part of the Holberton School simple shell project.
+
+.SH SEE ALSO
+.BR sh (1),
+.BR execve (2),
+.BR getenv (3)

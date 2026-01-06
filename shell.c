@@ -47,7 +47,7 @@ void execute_cmd(char *line, char *prog_name, char **env)
 	pid_t pid;
 	char *argv[30];
 	char *token;
-	int i = 0, is_builtin = 0;
+	int i = 0;
 	int status;
 
 	token = strtok(line, " \t");
@@ -60,8 +60,7 @@ void execute_cmd(char *line, char *prog_name, char **env)
 	argv[i] = NULL;
 	if (i == 0)
 		return;
-	is_builtin = execute_builtin(argv, env);
-	if (is_builtin != 0)
+	if (execute_builtin(argv, env) != 0)
 		return;
 	pid = fork();
 	if (pid == -1)
