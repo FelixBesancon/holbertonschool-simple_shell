@@ -50,15 +50,16 @@ void execute_cmd(char *line, char *prog_name, char **env)
 	int i = 0;
 	int status;
 
-	token = strtok(line, " ");
+	token = strtok(line, " \t");
 	while (token != NULL && i < 30)
 	{
 		argv[i] = token;
-		token = strtok(NULL, " ");
+		token = strtok(NULL, " \t");
 		i++;
 	}
 	argv[i] = NULL;
-
+	if (i == 0)
+		return;
 	pid = fork();
 	if (pid == -1)
 	{
