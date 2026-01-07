@@ -5,6 +5,7 @@
  * @argv: the argument to test and execute if it is a built-in
  * @env: environment
  * @line: command line
+ * @last_status: status of the last command
  *
  * Return: 1 if argv is a built-in, 0 otherwise
  */
