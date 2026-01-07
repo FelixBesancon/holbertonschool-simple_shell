@@ -13,23 +13,23 @@ char *get_full_path(char *cmd)
     int len;
 
     if (!cmd)
-        Return (NULL);
+        return (NULL);
 
     if (strchr(cmd, '/'))
     {
         if (access(cmd, X_OK) == 0)
-            Return (strdup(cmd));
-        Return (NULL);
+            return (strdup(cmd));
+        return (NULL);
     }
 
     path_env = getenv("PATH");
 
     if (!path_env)
-        Return (NULL);
+        return (NULL);
 
     path_copy = strdup(path_env);
     if (!path_copy)
-        Return (NULL);
+        return (NULL);
 
     token = strtok(path_copy, ":");
     while (token)
@@ -44,7 +44,7 @@ char *get_full_path(char *cmd)
         strcat(full_path, "/");
         strcat(full_path, cmd);
 
-        if (access(full_path, X_OK) == O)
+        if (access(full_path, X_OK) == 0)
         {
             free(path_copy);
             return (full_path);        
