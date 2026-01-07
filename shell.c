@@ -44,12 +44,9 @@ ssize_t read_line(char **line, size_t *len)
 void execute_cmd(char *line, char *prog_name, char **env)
 {
 	static int line_nb = 1;
-	char *argv[30];
-	char *token;
-	int i = 0;
+	char *argv[30], *token, *full_path;
+	int i = 0, status;
 	pid_t pid;
-	int status;
-	char *full_path;
 
 	token = strtok(line, " \t");
 	while (token != NULL && i < 30)
@@ -58,14 +55,11 @@ void execute_cmd(char *line, char *prog_name, char **env)
 		token = strtok(NULL, " \t");
 	}
 	argv[i] = NULL;
-
 	if (i == 0)
 		return;
-
-	if (execute_builtin(argv, env) != 0)
+	if (execute_builtin(argv, env, line) != 0)
 		return;
-
-	full_path = get_full_path(argv[0]);
+	full_path = get_full_path(argv[0], env);
 	if (full_path == NULL)
 	{
 		fprintf(stderr, "%s: %d: %s: not found\n",
@@ -73,7 +67,6 @@ void execute_cmd(char *line, char *prog_name, char **env)
 		line_nb++;
 		return;
 	}
-
 	pid = fork();
 	if (pid == -1)
 	{
@@ -82,7 +75,6 @@ void execute_cmd(char *line, char *prog_name, char **env)
 		line_nb++;
 		return;
 	}
-
 	if (pid == 0)
 	{
 		if (execve(full_path, argv, env) == -1)
@@ -95,7 +87,6 @@ void execute_cmd(char *line, char *prog_name, char **env)
 	}
 	else
 		wait(&status);
-
 	free(full_path);
 	line_nb++;
 }
