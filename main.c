@@ -10,6 +10,7 @@
 int main(int argc, char **argv, char **env)
 {
 	char *line = NULL;
+	int last_status = 0;
 	size_t len = 0;
 	ssize_t read;
 
@@ -30,7 +31,7 @@ int main(int argc, char **argv, char **env)
 		if (read == 0)
 			continue;
 
-		execute_cmd(line, argv[0], env);
+		execute_cmd(line, argv[0], env, &last_status);
 	}
 
 	free(line);
