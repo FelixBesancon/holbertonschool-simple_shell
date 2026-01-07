@@ -12,5 +12,6 @@ ssize_t read_line(char **line, size_t *bufsize);
 void display_prompt(void);
 void execute_cmd(char *line, char *program_name, char **env);
 int execute_builtin(char **argv, char **env);
+char *get_full_path(char *cmd);
 
 #endif
