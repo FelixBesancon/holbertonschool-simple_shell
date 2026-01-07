@@ -20,19 +20,19 @@ void display_prompt(void)
  */
 ssize_t read_line(char **line, size_t *len)
 {
-	ssize_t read;
+	ssize_t read_chars;
 
-	read = getline(line, len, stdin);
-	if (read == -1)
+	read_chars = getline(line, len, stdin);
+	if (read_chars == -1)
 		return (-1);
 
-	if (read > 0 && (*line)[read - 1] == '\n')
-		(*line)[read - 1] = '\0';
+	if (read_chars > 0 && (*line)[read_chars - 1] == '\n')
+		(*line)[read_chars - 1] = '\0';
 
 	if ((*line)[0] == '\0')
 		return (0);
 
-	return (read);
+	return (read_chars);
 }
 
 /**
@@ -44,40 +44,58 @@ ssize_t read_line(char **line, size_t *len)
 void execute_cmd(char *line, char *prog_name, char **env)
 {
 	static int line_nb = 1;
-	pid_t pid;
 	char *argv[30];
 	char *token;
 	int i = 0;
+	pid_t pid;
 	int status;
+	char *full_path;
 
 	token = strtok(line, " \t");
 	while (token != NULL && i < 30)
 	{
-		argv[i] = token;
+		argv[i++] = token;
 		token = strtok(NULL, " \t");
-		i++;
 	}
 	argv[i] = NULL;
+
 	if (i == 0)
 		return;
+
 	if (execute_builtin(argv, env) != 0)
 		return;
+
+	full_path = get_full_path(argv[0]);
+	if (full_path == NULL)
+	{
+		fprintf(stderr, "%s: %d: %s: not found\n",
+			prog_name, line_nb, argv[0]);
+		line_nb++;
+		return;
+	}
+
 	pid = fork();
 	if (pid == -1)
 	{
 		perror(prog_name);
+		free(full_path);
+		line_nb++;
 		return;
 	}
+
 	if (pid == 0)
 	{
-		if (execve(argv[0], argv, env) == -1)
+		if (execve(full_path, argv, env) == -1)
 		{
 			fprintf(stderr, "%s: %d: %s: not found\n",
 				prog_name, line_nb, argv[0]);
-			exit(127);
+			free(full_path);
+			_exit(127);
 		}
 	}
 	else
 		wait(&status);
+
+	free(full_path);
 	line_nb++;
 }
