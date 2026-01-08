@@ -9,15 +9,14 @@
  *
  * Return: 1 if argv is a built-in, 0 otherwise
  */
-int execute_builtin(char **argv, char **env, char *line, int *last_status)
+int execute_builtin(char **argv, char **env, char **line, int *last_status)
 {
 	int index;
 
 	if (strcmp(argv[0], "exit") == 0)
 	{
-		free(line);
-		if (argv[1] != NULL)
-			exit(atoi(argv[1]));
+		free(*line);
+		*line = NULL;
 		exit(*last_status);
 	}
 

@@ -7,7 +7,7 @@ void display_prompt(void)
 {
 	if (isatty(STDIN_FILENO))
 	{
-		printf("#cisfun$ ");
+		printf("hsh$ ");
 		fflush(stdout);
 	}
 }
@@ -42,13 +42,13 @@ ssize_t read_line(char **line, size_t *len)
  * @env: environment
  * @last_status: status of the last command
  */
-void execute_cmd(char *line, char *prog_name, char **env, int *last_status)
+void execute_cmd(char **line, char *prog_name, char **env, int *last_status)
 {
 	static int line_nb = 1;
 	char *argv[30];
 	int argc;
 
-	argc = tokenize_line(line, argv, 30);
+	argc = tokenize_line(*line, argv, 30);
 
 	if (argc == 0)
 		return;
