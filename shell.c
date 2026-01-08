@@ -103,6 +103,7 @@ int *line_nb, int *last_status)
 		fprintf(stderr, "%s: %d: %s: not found\n",
 				prog_name, *line_nb, argv[0]);
 		(*line_nb)++;
+		*last_status = 127;
 		return;
 	}
 
@@ -127,8 +128,11 @@ int *line_nb, int *last_status)
 	}
 	else
 	{
-		wait(&status);
-		*last_status = status >> 8;
+		wait (&status);
+		if (WIFEXITED(status))
+			*last_status = WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+			*last_status = 128 + WTERMSIG(status);
 	}
 
 	free(full_path);

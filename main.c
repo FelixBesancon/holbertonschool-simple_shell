@@ -35,5 +35,5 @@ int main(int argc, char **argv, char **env)
 	}
 
 	free(line);
-	return (0);
+	return (last_status);
 }
