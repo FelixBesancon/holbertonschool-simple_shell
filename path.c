@@ -9,10 +9,10 @@
  */
 char *get_full_path(char *cmd, char **env)
 {
-	char *path_cpy;
+	char *path_cpy = NULL;
 	int index;
 
-	if (!cmd)
+	if (!cmd || !env)
 		return (NULL);
 	if (strchr(cmd, '/'))
 	{
